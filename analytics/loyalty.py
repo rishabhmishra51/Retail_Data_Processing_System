@@ -107,6 +107,7 @@ def calculate_loyalty(db_path: str = DB_PATH) -> pd.DataFrame:
           f"updated {len(customer_points)} customers.")
     return points_df
 
+
 """
 analytics/loyalty.py
 ---------------------
