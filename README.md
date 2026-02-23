@@ -19,36 +19,51 @@ Generates analytical dashboards
 The architecture is modular, scalable, and designed for clarity and maintainability.
 
 
-# Project Architecture:
+# Project Architecture => High-Level Architecture:
 
-              ┌─────────────────────┐
-              │   Raw Data (CSV)    │
-              │   data/raw/         │
-              └──────────┬──────────┘
-                         │
-                         ▼
-              ┌─────────────────────┐
-              │   ETL Layer         │
-              │ ingest → validate   │
-              │ → load              │
-              └──────────┬──────────┘
-                         │
-                         ▼
-              ┌─────────────────────┐
-              │   SQLite Database   │
-              │   retail.db         │
-              └──────────┬──────────┘
-                         │
-         ┌───────────────┼────────────────┐
-         ▼               ▼                ▼
-   Loyalty Engine   Segmentation      Predictive
-   (analytics/)     (analytics/)      (analytics/)
-                         │
-                         ▼
-              ┌─────────────────────┐
-              │   Dashboard Layer   │
-              │   Matplotlib        │
-              └─────────────────────┘
+Raw Data ➜ Clean Data ➜ Structured Database ➜ Business Logic ➜ Insights Dashboard
+
+
+🟦 STEP 1: RAW DATA
+   📁 data/raw/
+   • Stores.csv
+   • Products.csv
+   • Customers.csv
+   • Sales.csv
+
+        │
+        ▼
+
+🟩 STEP 2: ETL PIPELINE (Data Processing Engine)
+   📥 ingest.py      → Read CSV files
+   🧹 validate.py    → Clean & validate
+   📤 load.py        → Insert into database
+
+        │
+        ▼
+
+🟨 STEP 3: DATABASE (Central Brain)
+   💾 database/retail.db
+   • Master Tables
+   • Transaction Tables
+   • Rules Tables
+
+        │
+        ▼
+
+🟧 STEP 4: ANALYTICS ENGINE (Business Intelligence)
+   🎯 loyalty.py
+   👥 segmentation.py
+   📊 predictive.py
+
+        │
+        ▼
+
+🟪 STEP 5: DASHBOARD (Insights Layer)
+   📈 dashboard.py
+   • Sales Trends
+   • Top Products
+   • Loyalty Distribution
 
 
 # Database Design
