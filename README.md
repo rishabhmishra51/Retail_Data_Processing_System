@@ -1,3 +1,13 @@
+# BYTE TEAM
+
+Rishabh Kumar Mishra
+Nishant Tiwari
+Shreyansh Yadav
+Satyam Sangal
+Shreeya Agarwal 
+
+
+
 # Project Objective
 
 This project implements a simplified Retail Analytics System that processes retail transaction data and generates business insights.
