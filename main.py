@@ -36,12 +36,20 @@ def step_run_etl():
         print("[ETL] No supported files found in data/raw/ — skipping ETL.")
         return
 
-    for table_name, raw_df in raw_data.items():
-        cleaned_df, rejected_df = validate(raw_df, table_name)
-        load_table(cleaned_df, table_name)
-        load_rejects(rejected_df, table_name)
-        save_cleaned_csv(cleaned_df, table_name)
-        save_rejected_csv(rejected_df, table_name)
+    # Load tables in dependency order
+    load_order = [
+        "stores", "products", "customer_details", "promotion_details", "loyalty_rules",
+        "store_sales_header", "store_sales_line_items"
+    ]
+
+    for table_name in load_order:
+        if table_name in raw_data:
+            raw_df = raw_data[table_name]
+            cleaned_df, rejected_df = validate(raw_df, table_name)
+            load_table(cleaned_df, table_name)
+            load_rejects(rejected_df, table_name)
+            save_cleaned_csv(cleaned_df, table_name)
+            save_rejected_csv(rejected_df, table_name)
 
     print("[ETL] Pipeline complete.")
 

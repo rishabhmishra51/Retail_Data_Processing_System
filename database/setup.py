@@ -23,9 +23,20 @@ def setup_database(db_path: str = DB_PATH) -> None:
     conn = get_connection(db_path)
     cursor = conn.cursor()
 
+    # Drop tables if they exist
+    tables = [
+        "store_sales_line_items", "store_sales_header", "customer_details",
+        "products", "promotion_details", "loyalty_rules", "stores",
+        "rejected_store_sales_line_items", "rejected_store_sales_header",
+        "rejected_customer_details", "rejected_products", "rejected_promotion_details",
+        "rejected_loyalty_rules", "rejected_stores"
+    ]
+    for table in tables:
+        cursor.execute(f"DROP TABLE IF EXISTS {table}")
+
     cursor.executescript("""
     -- Stores
-    CREATE TABLE IF NOT EXISTS stores (
+    CREATE TABLE stores (
         store_id        INTEGER PRIMARY KEY,
         store_name      TEXT NOT NULL,
         store_city      TEXT,
@@ -34,7 +45,7 @@ def setup_database(db_path: str = DB_PATH) -> None:
     );
 
     -- Products
-    CREATE TABLE IF NOT EXISTS products (
+    CREATE TABLE products (
         product_id          TEXT PRIMARY KEY,
         product_name        TEXT NOT NULL,
         product_category    TEXT,
@@ -44,7 +55,7 @@ def setup_database(db_path: str = DB_PATH) -> None:
     );
 
     -- Customer Details
-    CREATE TABLE IF NOT EXISTS customer_details (
+    CREATE TABLE customer_details (
         customer_id             TEXT PRIMARY KEY,
         first_name              TEXT,
         email                   TEXT,
@@ -58,7 +69,7 @@ def setup_database(db_path: str = DB_PATH) -> None:
     );
 
     -- Promotion Details
-    CREATE TABLE IF NOT EXISTS promotion_details (
+    CREATE TABLE promotion_details (
         promotion_id        INTEGER PRIMARY KEY,
         promotion_name      TEXT,
         start_date          TEXT,
@@ -68,7 +79,7 @@ def setup_database(db_path: str = DB_PATH) -> None:
     );
 
     -- Loyalty Rules
-    CREATE TABLE IF NOT EXISTS loyalty_rules (
+    CREATE TABLE loyalty_rules (
         rule_id             INTEGER PRIMARY KEY,
         rule_name           TEXT,
         points_per_unit_spend REAL,
@@ -79,7 +90,7 @@ def setup_database(db_path: str = DB_PATH) -> None:
     );
 
     -- Store Sales Header
-    CREATE TABLE IF NOT EXISTS store_sales_header (
+    CREATE TABLE store_sales_header (
         transaction_id   INTEGER PRIMARY KEY,
         customer_id      TEXT,
         store_id         INTEGER,
@@ -90,7 +101,7 @@ def setup_database(db_path: str = DB_PATH) -> None:
     );
 
     -- Store Sales Line Items
-    CREATE TABLE IF NOT EXISTS store_sales_line_items (
+    CREATE TABLE store_sales_line_items (
         line_item_id     INTEGER PRIMARY KEY,
         transaction_id   INTEGER,
         product_id       TEXT,
@@ -103,13 +114,13 @@ def setup_database(db_path: str = DB_PATH) -> None:
     );
 
     -- Reject tables (for ETL rejects)
-    CREATE TABLE IF NOT EXISTS rejected_stores        (store_id INTEGER, store_name TEXT, store_city TEXT, store_region TEXT, opening_date TEXT, reject_reason TEXT);
-    CREATE TABLE IF NOT EXISTS rejected_products      (product_id TEXT, product_name TEXT, product_category TEXT, unit_price REAL, current_stock_level INTEGER, restock_flag INTEGER, reject_reason TEXT);
-    CREATE TABLE IF NOT EXISTS rejected_customer_details (customer_id TEXT, first_name TEXT, email TEXT, loyalty_status TEXT, total_loyalty_points REAL, last_purchase_date TEXT, segment_id TEXT, customer_phone TEXT, customer_since TEXT, promotion_sensitivity TEXT, reject_reason TEXT);
-    CREATE TABLE IF NOT EXISTS rejected_promotion_details (promotion_id INTEGER, promotion_name TEXT, start_date TEXT, end_date TEXT, discount_percentage REAL, applicable_category TEXT, reject_reason TEXT);
-    CREATE TABLE IF NOT EXISTS rejected_loyalty_rules (rule_id INTEGER, rule_name TEXT, points_per_unit_spend REAL, min_spend_threshold REAL, bonus_points REAL, start_date TEXT, end_date TEXT, reject_reason TEXT);
-    CREATE TABLE IF NOT EXISTS rejected_store_sales_header (transaction_id INTEGER, customer_id TEXT, store_id INTEGER, transaction_date TEXT, total_amount REAL, reject_reason TEXT);
-    CREATE TABLE IF NOT EXISTS rejected_store_sales_line_items (line_item_id INTEGER, transaction_id INTEGER, product_id TEXT, promotion_id INTEGER, quantity INTEGER, line_item_amount REAL, reject_reason TEXT);
+    CREATE TABLE rejected_stores        (store_id INTEGER, store_name TEXT, store_city TEXT, store_region TEXT, opening_date TEXT, reject_reason TEXT);
+    CREATE TABLE rejected_products      (product_id TEXT, product_name TEXT, product_category TEXT, unit_price REAL, current_stock_level INTEGER, restock_flag INTEGER, reject_reason TEXT);
+    CREATE TABLE rejected_customer_details (customer_id TEXT, first_name TEXT, email TEXT, loyalty_status TEXT, total_loyalty_points REAL, last_purchase_date TEXT, segment_id TEXT, customer_phone TEXT, customer_since TEXT, promotion_sensitivity TEXT, reject_reason TEXT);
+    CREATE TABLE rejected_promotion_details (promotion_id INTEGER, promotion_name TEXT, start_date TEXT, end_date TEXT, discount_percentage REAL, applicable_category TEXT, reject_reason TEXT);
+    CREATE TABLE rejected_loyalty_rules (rule_id INTEGER, rule_name TEXT, points_per_unit_spend REAL, min_spend_threshold REAL, bonus_points REAL, start_date TEXT, end_date TEXT, reject_reason TEXT);
+    CREATE TABLE rejected_store_sales_header (transaction_id INTEGER, customer_id TEXT, store_id INTEGER, transaction_date TEXT, total_amount REAL, reject_reason TEXT);
+    CREATE TABLE rejected_store_sales_line_items (line_item_id INTEGER, transaction_id INTEGER, product_id TEXT, promotion_id INTEGER, quantity INTEGER, line_item_amount REAL, reject_reason TEXT);
     """)
 
     conn.commit()
